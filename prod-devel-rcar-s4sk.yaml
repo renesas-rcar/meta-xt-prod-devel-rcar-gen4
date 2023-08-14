@@ -33,7 +33,7 @@ common_data:
       rev: 1f6981217e97356acee16370b660eed2be722553
     - type: git
       url: "https://github.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4.git"
-      rev: s4sk-mp-1.0
+      rev: s4sk-1.2.0
 
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
