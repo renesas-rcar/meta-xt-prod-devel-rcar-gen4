@@ -14,8 +14,8 @@ variables:
   SOC_FAMILY: "r8a779f0"
   XT_DOMD_CONFIG_NAME: "domd-s4sk.cfg"
   XT_DOMU_CONFIG_NAME: "domu-s4sk.cfg"
-  XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc11-xt"
-  XT_KERNEL_REV: 33c9c4268e83508c68567fac3ff7a6f8b53f1868
+  XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc12-xt"
+  XT_KERNEL_REV: 521ea0504896b70f777c34d917c36c92a706ed36
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
@@ -39,7 +39,7 @@ common_data:
   domd_domu_sources: &DOMD_DOMU_SOURCES
     - type: git
       url: https://github.com/renesas-rcar/meta-renesas.git
-      rev: fb473def5263e910f90c49969415b1fd3f4ac880
+      rev: 9fcf3326e0e1fd94cecfed2de16048c5f4c98ac1
 
   # Common configuration options for all yocto-based domains
   conf: &COMMON_CONF
