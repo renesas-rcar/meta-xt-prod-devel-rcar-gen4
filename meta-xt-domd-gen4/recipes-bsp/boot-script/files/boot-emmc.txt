@@ -1,8 +1,8 @@
-ext4load mmc 0:1 0x48000000 r8a779f0-s4sk-xen.dtb
+ext4load mmc 0:1 0x48000000 xen.dtb
 ext4load mmc 0:1 0x84000000 uInitramfs
 ext4load mmc 0:1 0x7a000000 Image
-ext4load mmc 0:1 0x48080000 xen-s4sk-uImage
-ext4load mmc 0:1 0x7c000000 xenpolicy-s4sk
+ext4load mmc 0:1 0x48080000 xen
+ext4load mmc 0:1 0x7c000000 xenpolicy
 
 # Configure boot device in DTS
 fdt addr 0x48000000
