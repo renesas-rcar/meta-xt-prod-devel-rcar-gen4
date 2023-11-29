@@ -11,7 +11,7 @@ as Moulin-based project files provide correct entries in local.conf
 
 # Status
 
-This is a release 1.0 of the Xen-based development product for the
+This is a release 1.2.1 of the Xen-based development product for the
 S4 Starter Kit board.
 
 This release provides the following features:

@@ -20,7 +20,7 @@ reduce possible confuse, we recommend to download only
 `prod-devel-rcar-s4sk.yaml`:
 
 ```
-# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/s4sk-mp-1.0/prod-devel-rcar-s4sk.yaml
+# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/s4sk-1.2.1/prod-devel-rcar-s4sk.yaml
 ```
 
 ## Building
