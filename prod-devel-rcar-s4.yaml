@@ -14,8 +14,8 @@ variables:
   SOC_FAMILY: "r8a779f0"
   XT_DOMD_CONFIG_NAME: "domd-spider.cfg"
   XT_DOMU_CONFIG_NAME: "domu-spider.cfg"
-  XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc11.2-xt"
-  XT_KERNEL_REV: "555a13f8dd4ab57ada823a9b290f7c19fb29f1d0"
+  XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc12-xt"
+  XT_KERNEL_REV: "de8eb2661c9dc8261df0750905564f8891cb497e"
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
@@ -33,13 +33,13 @@ common_data:
       rev: a36260c04230d24a3819ae26e41f88de459776c9
     - type: git
       url: "https://github.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4.git"
-      rev: spider-1.2.1
+      rev: spider-1.2.2
 
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
     - type: git
       url: https://github.com/renesas-rcar/meta-renesas.git
-      rev: 92ddfebae62b78a65ee430d49b710bb16b719bf2
+      rev: 7c5854758e561dfb0e326854447409235a4e371e
 
   # Common configuration options for all yocto-based domains
   conf: &COMMON_CONF
