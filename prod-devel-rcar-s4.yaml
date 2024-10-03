@@ -2,7 +2,7 @@ desc: "Xen-Troops development setup for Renesas RCAR Gen4 hardware"
 min_ver: "0.15"
 
 variables:
-  YOCTOS_WORK_DIR: "yocto"
+  YOCTOS_WORK_DIR: "yocto-%{MACHINE}"
   DOM0_BUILD_DIR: "build-dom0"
   DOMD_BUILD_DIR: "build-domd"
   DOMU_BUILD_DIR: "build-domu"
@@ -10,10 +10,9 @@ variables:
   XT_DOMU_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-domu.dtb"
   XT_XEN_DTB_NAME: "%{SOC_FAMILY}-%{MACHINE}-xen.dtb"
   XT_GENERIC_DOMU_TAG: ""
-  MACHINE: "spider"
   SOC_FAMILY: "r8a779f0"
-  XT_DOMD_CONFIG_NAME: "domd-spider.cfg"
-  XT_DOMU_CONFIG_NAME: "domu-spider.cfg"
+  XT_DOMD_CONFIG_NAME: "domd-%{MACHINE}.cfg"
+  XT_DOMU_CONFIG_NAME: "domu-%{MACHINE}.cfg"
   XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc12-xt"
   XT_KERNEL_REV: "de8eb2661c9dc8261df0750905564f8891cb497e"
 common_data:
@@ -33,7 +32,7 @@ common_data:
       rev: a36260c04230d24a3819ae26e41f88de459776c9
     - type: git
       url: "https://github.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4.git"
-      rev: spider-1.2.2
+      rev: s4-1.2.2
 
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
@@ -213,7 +212,7 @@ components:
     build-dir: "artifacts"
     builder:
       type: archive
-      name: "s4-%{MACHINE}-boot-artifacts.tar.bz"
+      name: "%{MACHINE}-boot-artifacts.tar.bz"
       items:
         - "%{YOCTOS_WORK_DIR}/%{DOM0_BUILD_DIR}/tmp/deploy/images/generic-armv8-xt/Image"
         - "%{YOCTOS_WORK_DIR}/%{DOM0_BUILD_DIR}/tmp/deploy/images/generic-armv8-xt/uInitramfs"
@@ -248,6 +247,17 @@ images:
         image_path: "%{YOCTOS_WORK_DIR}/build-domd/tmp/deploy/images/%{MACHINE}/rcar-image-minimal-%{MACHINE}.ext4"
 
 parameters:
+  MACHINE:
+    desc: "RCAR Gen4-based device"
+    "spider":
+      default: true
+      overrides:
+        variables:
+          MACHINE: "spider"
+    "s4sk":
+      overrides:
+        variables:
+          MACHINE: "s4sk"
   ENABLE_DOMU:
     desc: "Build generic Yocto-based DomU"
     "no":

@@ -4,16 +4,21 @@ SRC_URI[sha256sum] = "29400e13f53b1831e0b8b10ec1224a1cbaa6dc1533a5322a20dd80bb84
 
 SRC_URI:remove = "file://configure.in-disable-tirpc-checking-for-fedora.patch"
 
-SRC_URI += " file://snort-tsn0.service \
+SRC_URI:append:spider = " file://snort-tsn0.service \
     file://snort-tsn1.service \
     file://snort-tsn2.service \
+    file://configure.in-disable-tirpc-checking-for-fedora-snort-20.patch \
+"
+
+SRC_URI:append:s4sk = " file://snort-tsn0.service \
+    file://snort-tsn1.service \
     file://configure.in-disable-tirpc-checking-for-fedora-snort-20.patch \
 "
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 
-do_install:append() {
+do_install:append:spider() {
     install -d ${D}${systemd_unitdir}/system
     install -m 0644 ${WORKDIR}/snort-tsn0.service ${D}${systemd_unitdir}/system/
     install -m 0644 ${WORKDIR}/snort-tsn1.service ${D}${systemd_unitdir}/system/
@@ -21,14 +26,24 @@ do_install:append() {
     echo "config daq: rswitch_offload" >> ${D}/etc/snort/snort.conf
 }
 
+do_install:append:s4sk() {
+    install -d ${D}${systemd_unitdir}/system
+    install -m 0644 ${WORKDIR}/snort-tsn0.service ${D}${systemd_unitdir}/system/
+    install -m 0644 ${WORKDIR}/snort-tsn1.service ${D}${systemd_unitdir}/system/
+    echo "config daq: rswitch_offload" >> ${D}/etc/snort/snort.conf
+}
 
-SYSTEMD_PACKAGES = "snort-tsn0 snort-tsn1 snort-tsn2 "
+SYSTEMD_PACKAGES:spider = "snort-tsn0 snort-tsn1 snort-tsn2 "
+SYSTEMD_PACKAGES:s4sk = "snort-tsn0 snort-tsn1 "
 SYSTEMD_SERVICE:snort-tsn0 = "snort-tsn0.service"
 SYSTEMD_SERVICE:snort-tsn1 = "snort-tsn1.service"
 SYSTEMD_SERVICE:snort-tsn2 = "snort-tsn2.service"
 
-FILES:${PN} += " ${systemd_unitdir}/system/snort-tsn0.service \
+FILES:${PN}:append:spider = " ${systemd_unitdir}/system/snort-tsn0.service \
     ${systemd_unitdir}/system/snort-tsn1.service \
     ${systemd_unitdir}/system/snort-tsn2.service \
 "
 
+FILES:${PN}:append:s4sk = " ${systemd_unitdir}/system/snort-tsn0.service \
+    ${systemd_unitdir}/system/snort-tsn1.service \
+"
