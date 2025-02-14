@@ -1,0 +1,45 @@
+# Determine configuration
+if test -z "$serverip"; then
+  setenv serverip 192.168.1.100
+  echo WARNING: Using default server IP $serverip
+  echo "        " you can override this by setting \'serverip\' variable
+fi
+
+if test -z "$ipaddr"; then
+  setenv ipaddr 192.168.1.2
+  echo WARNING: Using default board IP $ipaddr
+  echo "        " you can override this by setting \'ipaddr\' variable
+fi
+
+if test -z "$nfs_domd_dir"; then
+  setenv nfs_domd_dir "/srv/domd"
+  echo WARNING: Using default NFS root directory for DomD: $nfs_domd_dir
+  echo "        " you can override this by setting \'nfs_domd_dir\' variable
+fi
+
+if test -z "$nfs_domu_dir"; then
+  setenv nfs_domu_dir "/srv/domu"
+  echo WARNING: Using default NFS root directory for DomU: $nfs_domu_dir
+  echo "        " you can override this by setting \'nfs_domu_dir\' variable
+fi
+
+
+# Load Images via TFTP
+tftp 0x48000000 r8a779f0-s4sk-xen.dtb
+tftp 0x84000000 uInitramfs
+tftp 0x7a000000 Image
+tftp 0x48080000 xen-s4sk-uImage
+tftp 0x7c000000 xenpolicy-s4sk
+
+# Configure boot device in DTS
+fdt addr 0x48000000
+fdt resize 2048
+fdt mknode / boot_dev
+fdt set /boot_dev device nfs
+fdt set /boot_dev my_ip $ipaddr
+fdt set /boot_dev nfs_server_ip $serverip
+fdt set /boot_dev nfs_dir "$nfs_domd_dir"
+fdt set /boot_dev domu_nfs_dir "$nfs_domu_dir"
+
+# Boot the board
+bootm 0x48080000 0x84000000 0x48000000
