@@ -20,7 +20,7 @@ reduce possible confuse, we recommend to download only
 `prod-devel-rcar-s4.yaml`:
 
 ```
-# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/spider-1.2.2/prod-devel-rcar-s4.yaml
+# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/{update-path}/prod-devel-rcar-s4.yaml
 ```
 
 ## Building
@@ -32,22 +32,24 @@ line option:
 
 ```
 # moulin prod-devel-rcar-s4.yaml --help-config
-usage: moulin prod-devel-rcar-s4.yaml [--ENABLE_DOMU {no,yes}]
+usage: moulin prod-devel-rcar-s4.yaml [--MACHINE={spider, s4sk, vc4}] [--ENABLE_DOMU {no,yes}]
 
 Config file description: Xen-Troops development setup for Renesas RCAR Gen4
 hardware
 
 optional arguments:
+  --MACHINE={spider, s4sk, vc4}
   --ENABLE_DOMU {no,yes}
                         Build generic Yocto-based DomU
 ```
+All three S4 eval boards are supported you can select your board with option
+`--MACHINE={board}` Valid arguments are: `spider, s4sk, and vc4`
 
-Only one machine is supported as of now: `spider`. You can enable or
-disable DomU build with `--ENABLE_DOMU=yes` option.
-Be default it is disabled.
+You can enable or disable DomU build with `--ENABLE_DOMU=yes` option.
+By default it is disabled.
 
 So, to build with DomU (generic Yocto-based virtual machine) use the
-following command line: `moulin prod-devel-rcar-s4.yaml
+following command line: `moulin prod-devel-rcar-s4.yaml --MACHINE={board}
 --ENABLE_DOMU=yes`.
 
 Moulin will generate `build.ninja` file. After that run `ninja` to
@@ -62,11 +64,11 @@ root file systems. Files that are included:
 
 * Dom0 kernel image (`Image`)
 * Dom0 rootfs image (`uInitramfs`)
-* Xen hypervisor image (`xen-spider.uImage`)
-* Xen policy (`xenpolicy-spider`)
-* Device tree (`r8a779f0-spider-xen.dtb`)
-* ARM TF BL31 (`bl31-spider.srec`)
-* OP-TEE (`tee-spider.srec`)
+* Xen hypervisor image (`xen-vc4.uImage`)
+* Xen policy (`xenpolicy-vc4`)
+* Device tree (`r8a779f0-vc4-xen.dtb`)
+* ARM TF BL31 (`bl31-vc4.srec`)
+* OP-TEE (`tee-vc4.srec`)
 
 To build this archive, you can use target `boot_artifacts` for Ninja:
 
@@ -111,7 +113,7 @@ This XT product provides only one image: `full`.
 You can prepare the image by running
 
 ```
-# rouge prod-devel-rcar-s4.yaml --ENABLE_DOMU=yes -i full
+# rouge prod-devel-rcar-s4.yaml --ENABLE_DOMU=yes --MACHINE={board} -i full
 ```
 
 This will create file `full.img` in your current directory.
@@ -119,7 +121,7 @@ This will create file `full.img` in your current directory.
 Also you can write image directly to an SD card by running
 
 ```
-# sudo rouge prod-devel-rcar.yaml --ENABLE_DOMU=yes -i full -so /dev/sdX
+# sudo rouge prod-devel-rcar.yaml --ENABLE_DOMU=yes --MACHINE={board} -i full -so /dev/sdX
 ```
 
 **BE SURE TO PROVIDE CORRECT DEVICE NAME**. `rouge` has no
@@ -156,7 +158,7 @@ Generated eMMC image contains the boot script for U-Boot, so to boot
 via eMMC all you need is to set the following variable:
 
 ```
-setenv bootcmd 'ext2load mmc 0:1 0x83000000 boot-emmc.uImage; source 0x83000000'
+setenv bootcmd 'ext4load mmc 0:1 0x83000000 boot-emmc.uImage; source 0x83000000'
 ```
 
 ### Booting via TFTP/NFS using boot script
@@ -183,23 +185,21 @@ is is possible to configure board IP, server IP and NFS path for DomD
 and DomU. Please set the following environment for that:
 
 ```
-setenv set_ufs 'i2c dev 0; i2c mw 0x6c 0x26 0x05 ;i2c olen 0x6c 2; i2c mw 0x6c 0x13a 0x86 ;i2c mw 0x6c 0x268 0x06; i2c mw 0x6c 0x269 0x00; i2c mw 0x6c 0x26a 0x3c; i2c mw 0x6c 0x26b 0x00; i2c mw 0x6c 0x26c 0x06; i2c mw 0x6c 0x26d 0x00; i2c mw 0x6c 0x26e 0x3f; i2c mw 0x6c 0x26f 0x00'
-
-setenv bootcmd 'run set_ufs; run bootcmd_tftp'
+setenv bootcmd 'run bootcmd_tftp'
 setenv bootcmd_mmc0 'run mmc0_xen_load; run mmc0_dtb_load; run mmc0_kernel_load; run mmc0_xenpolicy_load; run mmc0_initramfs_load; bootm 0x48080000 0x84000000 0x48000000'
 setenv bootcmd_tftp 'run tftp_xen_load; run tftp_dtb_load; run tftp_kernel_load; run tftp_xenpolicy_load; run tftp_initramfs_load; bootm 0x48080000 0x84000000 0x48000000'
 
-setenv mmc0_dtb_load 'ext2load mmc 0:1 0x48000000 xen.dtb; fdt addr 0x48000000; fdt resize; fdt mknode / boot_dev; fdt set /boot_dev device mmcblk0'
-setenv mmc0_initramfs_load 'ext2load mmc 0:1 0x84000000 uInitramfs'
-setenv mmc0_kernel_load 'ext2load mmc 0:1 0x7a000000 Image'
-setenv mmc0_xen_load 'ext2load mmc 0:1 0x48080000 xen'
-setenv mmc0_xenpolicy_load 'ext2load mmc 0:1 0x7c000000 xenpolicy'
+setenv mmc0_dtb_load 'ext4load mmc 0:1 0x48000000 xen.dtb; fdt addr 0x48000000; fdt resize; fdt mknode / boot_dev; fdt set /boot_dev device mmcblk0'
+setenv mmc0_initramfs_load 'ext4load mmc 0:1 0x84000000 uInitramfs'
+setenv mmc0_kernel_load 'ext4load mmc 0:1 0x7a000000 Image'
+setenv mmc0_xen_load 'ext4load mmc 0:1 0x48080000 xen'
+setenv mmc0_xenpolicy_load 'ext4load mmc 0:1 0x7c000000 xenpolicy'
 
 setenv tftp_configure_nfs 'fdt set /boot_dev device nfs; fdt set /boot_dev my_ip 192.168.1.2; fdt set /boot_dev nfs_server_ip 192.168.1.100; fdt set /boot_dev nfs_dir "/srv/domd"; fdt set /boot_dev domu_nfs_dir "/srv/domu"'
-setenv tftp_dtb_load 'tftp 0x48000000 r8a779f0-spider-xen.dtb; fdt addr 0x48000000; fdt resize; fdt mknode / boot_dev; run tftp_configure_nfs; '
+setenv tftp_dtb_load 'tftp 0x48000000 r8a779f0-{board}-xen.dtb; fdt addr 0x48000000; fdt resize; fdt mknode / boot_dev; run tftp_configure_nfs; '
 setenv tftp_initramfs_load 'tftp 0x84000000 uInitramfs'
 setenv tftp_kernel_load 'tftp 0x7a000000 Image'
 setenv tftp_xen_load 'tftp 0x48080000 xen-uImage'
-setenv tftp_xenpolicy_load 'tftp 0x7c000000 xenpolicy-spider'
+setenv tftp_xenpolicy_load 'tftp 0x7c000000 xenpolicy-{board}'
 
 ```

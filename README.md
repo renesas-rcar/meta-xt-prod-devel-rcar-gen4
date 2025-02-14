@@ -11,8 +11,9 @@ as Moulin-based project files provide correct entries in local.conf
 
 # Status
 
-This is a release 1.2.2 of the Xen-based development product for the
-S4 Spider board.
+This is a release of the Xen-based development product for S4 boards
+(Spider, S4 Starter Kit, Vehicle Computer 4) to support the R-Car S4
+Ethernet Switching Application Note.
 
 This release provides the following features:
 
@@ -21,15 +22,9 @@ This release provides the following features:
  - Driver domain (DomD), which has access to all available hardware
  - Optional generic domain (DomU)
  - Support for OP-TEE in virtualization mode
- - ICCOM partitioning demo (proprietary components are required to
-   test the feature)
- - R-Switch VMQ: R-Switch virtualization feature
- - R-Switch VMQ TSN: R-Switch TSN pass-through feature
- - R-Switch L3 routing offload (including VLAN routes)
- - R-Switch traffic control offload
- - R-Switch offloaded IPS/IDS Snort support
- - Disabling L3 HW forwarding respectively to /proc/sys/net/ipv4/ip_forward value
- - Disabling/enabling L3 offload via sysfs file
+ - R-Switch virtual port to allow hardware offloaded traffic from DomU
+ - R-Switch L2 switching offload (including internal and external ports)
+ - R-Switch L3 routing offload (including internal and external ports)
  - Virtualized OP-TEE support
  - PCIe SR-IOV support
 
@@ -46,15 +41,14 @@ The following HW modules were tested and are confirmed to work:
 
 At least IPL 0.5.0 is required for normal operation. Release was
 tested with IPL 3.6.0. User is required to flash ARM TF
-(bl31-spider.srec) and OP-TEE (tee-spider.srec) provided by the build
+(bl31-{board}.srec) and OP-TEE (tee-{board}.srec) provided by the build
 to ensure that Xen and DomD/DomU will work correctly.
 
-# Documentation
+# Documentation (currently in preparation)
 
+- [Application Note](https://www.renesas.com/en/search?keywords=s4)
 - [Building][]
 - [Virtualization][]
-- [TC and L3 offload][]
 
 [Building]: ./doc/building.md
 [Virtualization]: ./doc/virtualization.md
-[TC and L3 offload]: ./doc/tc-and-l3-offload.md
