@@ -3,6 +3,7 @@ require xen-source.inc
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
+    file://xl-add-rswitch_vport-device.patch \
     file://xenpcid-xenstore.conf \
 "
 

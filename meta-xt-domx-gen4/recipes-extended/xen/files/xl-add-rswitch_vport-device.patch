@@ -1,0 +1,353 @@
+From 65ecd79ee8e7c46b6e8fc7651e65bfb4dbc651cc Mon Sep 17 00:00:00 2001
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Date: Sun, 29 Sep 2024 18:55:43 +0500
+Subject: [PATCH] xl: add rswitch_vport device
+
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ tools/include/libxl.h                     |  27 ++++++
+ tools/include/libxl_utils.h               |   4 +
+ tools/libs/light/Makefile                 |   1 +
+ tools/libs/light/libxl_create.c           |   1 +
+ tools/libs/light/libxl_internal.h         |   1 +
+ tools/libs/light/libxl_rswitch_vport.c    | 108 ++++++++++++++++++++++
+ tools/libs/light/libxl_types.idl          |  18 ++++
+ tools/libs/light/libxl_types_internal.idl |   1 +
+ tools/xl/xl_parse.c                       |  48 +++++++++-
+ 9 files changed, 208 insertions(+), 1 deletion(-)
+ create mode 100644 tools/libs/light/libxl_rswitch_vport.c
+
+diff --git a/tools/include/libxl.h b/tools/include/libxl.h
+index eedd742bd9..119faf49cd 100644
+--- a/tools/include/libxl.h
++++ b/tools/include/libxl.h
+@@ -2376,6 +2376,33 @@ int libxl_device_renesas_vmq_getinfo(libxl_ctx *ctx, uint32_t domid,
+                               libxl_renesas_vmq_info *renesas_vmqlinfo)
+                               LIBXL_EXTERNAL_CALLERS_ONLY;
+ 
++/* Rswitch vport */
++int libxl_device_rswitch_vport_add(libxl_ctx *ctx, uint32_t domid,
++                                   libxl_device_rswitch_vport *vport,
++                                   const libxl_asyncop_how *ao_how)
++                                   LIBXL_EXTERNAL_CALLERS_ONLY;
++int libxl_device_rswitch_vport_remove(libxl_ctx *ctx, uint32_t domid,
++                                      libxl_device_rswitch_vport *vport,
++                                      const libxl_asyncop_how *ao_how)
++                                      LIBXL_EXTERNAL_CALLERS_ONLY;
++int libxl_device_rswitch_vport_destroy(libxl_ctx *ctx, uint32_t domid,
++                                       libxl_device_rswitch_vport *vport,
++                                       const libxl_asyncop_how *ao_how)
++                                       LIBXL_EXTERNAL_CALLERS_ONLY;
++
++libxl_device_rswitch_vport *libxl_device_rswitch_vport_list(libxl_ctx *ctx,
++                                                            uint32_t domid,
++                                                            int *num)
++                                                            LIBXL_EXTERNAL_CALLERS_ONLY;
++void libxl_device_rswitch_vport_list_free(libxl_device_rswitch_vport* list,
++                                          int num)
++                                          LIBXL_EXTERNAL_CALLERS_ONLY;
++
++int libxl_device_rswitch_vport_getinfo(libxl_ctx *ctx, uint32_t domid,
++                                       const libxl_device_rswitch_vport *vport,
++                                       libxl_rswitch_vport_info *vport_info)
++                                       LIBXL_EXTERNAL_CALLERS_ONLY;
++
+ /* Keyboard */
+ int libxl_device_vkb_add(libxl_ctx *ctx, uint32_t domid, libxl_device_vkb *vkb,
+                          const libxl_asyncop_how *ao_how)
+diff --git a/tools/include/libxl_utils.h b/tools/include/libxl_utils.h
+index 02b1a646a2..a58afdf845 100644
+--- a/tools/include/libxl_utils.h
++++ b/tools/include/libxl_utils.h
+@@ -93,6 +93,10 @@ int libxl_devid_to_device_renesas_vmq(libxl_ctx *ctx, uint32_t domid,
+                                       int devid,
+                                       libxl_device_renesas_vmq *renesas_vmq);
+ 
++int libxl_devid_to_device_rswitch_vport(libxl_ctx *ctx, uint32_t domid,
++                                        int devid,
++                                        libxl_device_rswitch_vport *vport);
++
+ int libxl_ctrlport_to_device_usbdev(libxl_ctx *ctx, uint32_t domid,
+                                     int ctrl, int port,
+                                     libxl_device_usbdev *usbdev);
+diff --git a/tools/libs/light/Makefile b/tools/libs/light/Makefile
+index fdb65f3a35..da76a97e33 100644
+--- a/tools/libs/light/Makefile
++++ b/tools/libs/light/Makefile
+@@ -115,6 +115,7 @@ SRCS-y += libxl_pvcalls.c
+ SRCS-y += libxl_vsnd.c
+ SRCS-y += libxl_vkb.c
+ SRCS-y += libxl_renesas_vmq.c
++SRCS-y += libxl_rswitch_vport.c
+ SRCS-y += libxl_genid.c
+ SRCS-y += _libxl_types.c
+ SRCS-y += libxl_flask.c
+diff --git a/tools/libs/light/libxl_create.c b/tools/libs/light/libxl_create.c
+index 0dea741bc0..7427e2e9f7 100644
+--- a/tools/libs/light/libxl_create.c
++++ b/tools/libs/light/libxl_create.c
+@@ -1855,6 +1855,7 @@ const libxl__device_type *device_type_tbl[] = {
+     &libxl__vdispl_devtype,
+     &libxl__vsnd_devtype,
+     &libxl__renesas_vmq_devtype,
++    &libxl__rswitch_vport_devtype,
+     NULL
+ };
+ 
+diff --git a/tools/libs/light/libxl_internal.h b/tools/libs/light/libxl_internal.h
+index 29703a5e40..3a5b067c13 100644
+--- a/tools/libs/light/libxl_internal.h
++++ b/tools/libs/light/libxl_internal.h
+@@ -4007,6 +4007,7 @@ extern const libxl__device_type libxl__p9_devtype;
+ extern const libxl__device_type libxl__pvcallsif_devtype;
+ extern const libxl__device_type libxl__vsnd_devtype;
+ extern const libxl__device_type libxl__renesas_vmq_devtype;
++extern const libxl__device_type libxl__rswitch_vport_devtype;
+ 
+ extern const libxl__device_type *device_type_tbl[];
+ 
+diff --git a/tools/libs/light/libxl_rswitch_vport.c b/tools/libs/light/libxl_rswitch_vport.c
+new file mode 100644
+index 0000000000..a66c836dca
+--- /dev/null
++++ b/tools/libs/light/libxl_rswitch_vport.c
+@@ -0,0 +1,108 @@
++#include "libxl_internal.h"
++
++static int libxl__device_rswitch_vport_setdefault(libxl__gc *gc, uint32_t domid,
++                                                  libxl_device_rswitch_vport *vport,
++                                                  bool hotplug)
++{
++    return libxl__resolve_domid(gc, vport->backend_domname, &vport->backend_domid);
++}
++
++static void libxl__device_rswitch_vport_add(libxl__egc *egc, uint32_t domid,
++                                            libxl_device_rswitch_vport *vport,
++                                            libxl__ao_device *aodev)
++{
++    libxl__device_add_async(egc, domid, &libxl__rswitch_vport_devtype, vport, aodev);
++}
++
++static int libxl_device_rswitch_vport_compare(const libxl_device_rswitch_vport *d1,
++                                              const libxl_device_rswitch_vport *d2)
++{
++    return COMPARE_DEVID(d1, d2);
++}
++
++static void libxl__update_config_rswitch_vport(libxl__gc *gc,
++                                               libxl_device_rswitch_vport *dst,
++                                               libxl_device_rswitch_vport *src)
++{
++    dst->devid = src->devid;
++    dst->osid = src->osid;
++}
++
++static int libxl__rswitch_vport_from_xenstore(libxl__gc *gc, const char *libxl_path,
++                                              libxl_devid devid,
++                                              libxl_device_rswitch_vport *vport)
++{
++    const char *be_path;
++    int rc;
++
++    rc = libxl__xs_read_mandatory(gc, XBT_NULL,
++                                  GCSPRINTF("%s/backend", libxl_path),
++                                  &be_path);
++    if (rc) return rc;
++
++    vport->devid = devid;
++
++    return libxl__backendpath_parse_domid(gc, be_path, &vport->backend_domid);
++}
++
++static int libxl__set_xenstore_rswitch_vport(libxl__gc *gc, uint32_t domid,
++                                             libxl_device_rswitch_vport *vport,
++                                             flexarray_t *back, flexarray_t *front,
++                                             flexarray_t *ro_front)
++{
++    flexarray_append_pair(ro_front, "osid", GCSPRINTF("%d", vport->osid));
++
++    return 0;
++}
++
++int libxl_device_rswitch_vport_getinfo(libxl_ctx *ctx, uint32_t domid,
++                                       const libxl_device_rswitch_vport *vport,
++                                       libxl_rswitch_vport_info *info)
++{
++    GC_INIT(ctx);
++    char *libxl_path, *devpath;
++    char *val;
++    int rc;
++
++    libxl_rswitch_vport_info_init(info);
++    info->devid = vport->devid;
++
++    devpath = libxl__domain_device_frontend_path(gc, domid, info->devid,
++                                                 LIBXL__DEVICE_KIND_RENESAS_VMQ);
++    libxl_path = libxl__domain_device_libxl_path(gc, domid, info->devid,
++                                                 LIBXL__DEVICE_KIND_RENESAS_VMQ);
++
++    info->backend = xs_read(ctx->xsh, XBT_NULL, GCSPRINTF("%s/backend", libxl_path), NULL);
++    if (!info->backend) { rc = ERROR_FAIL; goto out; }
++
++    rc = libxl__backendpath_parse_domid(gc, info->backend, &info->backend_id);
++    if (rc) goto out;
++
++    val = libxl__xs_read(gc, XBT_NULL, GCSPRINTF("%s/state", devpath));
++    info->state = val ? strtoul(val, NULL, 10) : -1;
++
++    info->frontend = xs_read(ctx->xsh, XBT_NULL, GCSPRINTF("%s/frontend", libxl_path), NULL);
++    info->frontend_id = domid;
++
++    val = libxl__xs_read(gc, XBT_NULL, GCSPRINTF("%s/osid", devpath));
++    info->osid = val ? strtoul(val, NULL, 10) : 0;
++
++out:
++     GC_FREE;
++     return rc;
++}
++
++static LIBXL_DEFINE_DEVICE_FROM_TYPE(rswitch_vport)
++static LIBXL_DEFINE_UPDATE_DEVID(rswitch_vport)
++static LIBXL_DEFINE_DEVICES_ADD(rswitch_vport)
++
++LIBXL_DEFINE_DEVID_TO_DEVICE(rswitch_vport)
++LIBXL_DEFINE_DEVICE_ADD(rswitch_vport)
++LIBXL_DEFINE_DEVICE_REMOVE(rswitch_vport)
++LIBXL_DEFINE_DEVICE_LIST(rswitch_vport)
++
++DEFINE_DEVICE_TYPE_STRUCT(rswitch_vport, RSWITCH_VPORT, rswitch_vports,
++    .update_config = (device_update_config_fn_t)libxl__update_config_rswitch_vport,
++    .from_xenstore = (device_from_xenstore_fn_t)libxl__rswitch_vport_from_xenstore,
++    .set_xenstore_config = (device_set_xenstore_config_fn_t)libxl__set_xenstore_rswitch_vport
++);
+diff --git a/tools/libs/light/libxl_types.idl b/tools/libs/light/libxl_types.idl
+index c943b73ecd..6114e8c963 100644
+--- a/tools/libs/light/libxl_types.idl
++++ b/tools/libs/light/libxl_types.idl
+@@ -969,6 +969,13 @@ libxl_device_renesas_vmq = Struct("device_renesas_vmq", [
+     ("osid", uint32),
+     ])
+ 
++libxl_device_rswitch_vport = Struct("device_rswitch_vport", [
++    ("backend_domid", libxl_domid),
++    ("backend_domname", string),
++    ("devid", libxl_devid),
++    ("osid", uint32),
++    ])
++
+ libxl_domain_config = Struct("domain_config", [
+     ("c_info", libxl_domain_create_info),
+     ("b_info", libxl_domain_build_info),
+@@ -986,6 +993,7 @@ libxl_domain_config = Struct("domain_config", [
+     ("vdispls", Array(libxl_device_vdispl, "num_vdispls")),
+     ("vsnds", Array(libxl_device_vsnd, "num_vsnds")),
+     ("renesas_vmqs", Array(libxl_device_renesas_vmq, "num_renesas_vmqs")),
++    ("rswitch_vports", Array(libxl_device_rswitch_vport, "num_rswitch_vports")),
+     # a channel manifests as a console with a name,
+     # see docs/misc/channels.txt
+     ("channels", Array(libxl_device_channel, "num_channels")),
+@@ -1154,6 +1162,16 @@ libxl_renesas_vmq_info = Struct("renesas_vmq_info", [
+     ("osid", uint32),
+     ])
+ 
++libxl_rswitch_vport_info = Struct("rswitch_vport_info", [
++    ("backend", string),
++    ("backend_id", uint32),
++    ("frontend", string),
++    ("frontend_id", uint32),
++    ("devid", libxl_devid),
++    ("state", integer),
++    ("osid", uint32),
++    ])
++
+ # NUMA node characteristics: size and free are how much memory it has, and how
+ # much of it is free, respectively. dists is an array of distances from this
+ # node to each other node.
+diff --git a/tools/libs/light/libxl_types_internal.idl b/tools/libs/light/libxl_types_internal.idl
+index 7cec9361de..099e0efc1f 100644
+--- a/tools/libs/light/libxl_types_internal.idl
++++ b/tools/libs/light/libxl_types_internal.idl
+@@ -34,6 +34,7 @@ libxl__device_kind = Enumeration("device_kind", [
+     (16, "VINPUT"),
+     (17, "VIRTIO_DISK"),
+     (18, "RENESAS_VMQ"),
++    (19, "RSWITCH_VPORT"),
+     ])
+ 
+ libxl__console_backend = Enumeration("console_backend", [
+diff --git a/tools/xl/xl_parse.c b/tools/xl/xl_parse.c
+index 95edc88ddb..add39cbb3f 100644
+--- a/tools/xl/xl_parse.c
++++ b/tools/xl/xl_parse.c
+@@ -884,6 +884,28 @@ out:
+     return rc;
+ }
+ 
++static int parse_rswitch_vport_config(libxl_device_rswitch_vport *vport,
++                                      char *token)
++{
++    char *oparg;
++    int rc;
++
++    if (MATCH_OPTION("backend", token, oparg)) {
++        vport->backend_domname = strdup(oparg);
++        rc = 0;
++    } else if (MATCH_OPTION("osid", token, oparg)) {
++        vport->osid = strtoul(oparg, NULL, 0);
++        rc = 0;
++    } else {
++        fprintf(stderr, "Unknown string \"%s\" in rswitch_vport spec\n", token);
++        rc = 1;
++        goto out;
++    }
++
++out:
++    return rc;
++}
++
+ static int parse_vsnd_params(libxl_vsnd_params *params, char *token)
+ {
+     char *oparg;
+@@ -1242,7 +1264,7 @@ void parse_config_data(const char *config_source,
+     XLU_Config *config;
+     XLU_ConfigList *cpus, *vbds, *nics, *pcis, *cvfbs, *cpuids, *vtpms,
+                    *usbctrls, *usbdevs, *p9devs, *vdispls, *pvcallsifs_devs,
+-                   *renesas_vmqs;
++                   *renesas_vmqs, *rswitch_vports;
+     XLU_ConfigList *channels, *ioports, *irqs, *iomem, *viridian, *dtdevs,
+                    *mca_caps;
+     int num_ioports, num_irqs, num_iomem, num_cpus, num_viridian, num_mca_caps;
+@@ -2219,6 +2241,30 @@ void parse_config_data(const char *config_source,
+         }
+     }
+ 
++    if (!xlu_cfg_get_list(config, "rswitch_vport", &rswitch_vports, 0, 0)) {
++        d_config->num_rswitch_vports = 0;
++        d_config->rswitch_vports = NULL;
++        while ((buf = xlu_cfg_get_listitem(rswitch_vports, d_config->num_rswitch_vports)) != NULL) {
++            libxl_device_rswitch_vport *vport;
++            char * buf2 = strdup(buf);
++            char *p;
++            vport = ARRAY_EXTEND_INIT(d_config->rswitch_vports,
++                                      d_config->num_rswitch_vports,
++                                      libxl_device_rswitch_vport_init);
++            p = strtok (buf2, ",");
++            while (p != NULL)
++            {
++                while (*p == ' ') p++;
++                if (parse_rswitch_vport_config(vport, p)) {
++                    free(buf2);
++                    exit(1);
++                }
++                p = strtok (NULL, ",");
++            }
++            free(buf2);
++        }
++    }
++
+     parse_vsnd_config(config, d_config);
+ 
+     if (!xlu_cfg_get_list (config, "channel", &channels, 0, 0)) {
+-- 
+2.39.5
+
