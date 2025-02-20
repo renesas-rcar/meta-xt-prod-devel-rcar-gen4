@@ -1,4 +1,4 @@
-#include "r8a779f0-s4sk.dts"
+#include "r8a779f0-vc4-xen-base.dts"
 
 /*
  * The device tree compiler (DTC) is allocating the phandle from 1 to
@@ -85,10 +85,6 @@
 	status = "disabled";
 };
 
-&hscif0	{
-	status = "disabled";
-};
-
 &rswitch {
 	/delete-property/iommus;
 	bat-address = <0 0x20000000>;
@@ -102,20 +98,30 @@
 	/delete-property/iommus;
 };
 
-&rt_dmac0  {
+&mmc0 {
 	/delete-property/iommus;
 };
 
-&rt_dmac1  {
+&rt_dmac0 {
 	/delete-property/iommus;
 };
 
-&rt_dmac2  {
+&rt_dmac1 {
 	/delete-property/iommus;
 };
 
-&rt_dmac3  {
+&rt_dmac2 {
 	/delete-property/iommus;
+};
+
+&rt_dmac3 {
+	/delete-property/iommus;
+};
+
+&ufs {
+	/delete-property/iommus;
+	//status = "okay";
+	status = "disabled";
 };
 
 &ipmmu_mm {
@@ -130,8 +136,7 @@
 	status = "disabled";
 };
 
-
-&ipmmu_ds0{
+&ipmmu_ds0 {
 	status = "disabled";
 };
 
@@ -139,7 +144,11 @@
 	status = "disabled";
 };
 
-/* Force enable UFS */
-&ufs {
-        status = "okay";
+
+&rpc {
+	status = "disabled";
+};
+
+&tsc {
+	status = "disabled";
 };

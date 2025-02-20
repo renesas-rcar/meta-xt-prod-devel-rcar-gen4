@@ -16,16 +16,6 @@
 	passthrough {
 	};
 
-	reserved-memory {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-
-		rswitch_linkfix: rswitch_linkfix_mem@44000000 {
-			compatible = "renesas,rswitch-linkfix";
-			reg = <0x0 0x44000000 0x0 0x1000>;
-		};
-	};
 	/*
 	 * When creating DT for the guest domain Xen inserts only dummy CPU nodes.
 	 * And the number of these inserted CPU nodes is equal to the number of
@@ -64,12 +54,31 @@
 /delete-node/&gic_its;
 
 &pciec0 {
+	status = "okay";
+
 	msi-map = <0x0 PHANDLE_ITS 0x0 0x1000>;
+
+	/* undo changes from r8a779f0-native.dtsi */
+	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
+	/delete-property/iommus;
+	/delete-property/iommu-map;
+	/delete-property/iommu-map-msk;
 };
 
 &pciec1 {
+	status = "disabled";
+
 	msi-map = <0x0 PHANDLE_ITS 0x0 0x1000>;
+
+	/* undo changes from r8a779f0-native.dtsi */
+	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
+	/delete-property/iommus;
+	/delete-property/iommu-map;
+	/delete-property/iommu-map-msk;
 };
+
+/delete-node/ &pciec0_ep;
+/delete-node/ &pciec1_ep;
 
 /* Xen serial consoles */
 &scif3	{
@@ -82,7 +91,7 @@
 
 &rswitch {
 	/delete-property/iommus;
-	memory-region = <&rswitch_linkfix>;
+	bat-address = <0 0x20000000>;
 };
 
 &dmac0 {

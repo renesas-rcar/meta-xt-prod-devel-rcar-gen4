@@ -12,18 +12,6 @@
 	#address-cells = <2>;
 	#size-cells = <2>;
 
-	reserved-memory {
-		#address-cells = <2>;
-		#size-cells = <2>;
-		ranges;
-
-		/* R-Switch LINKFIX table */
-		rswitch_linkfix: rswitch_linkfix_mem@44000000 {
-			compatible = "renesas,rswitch-linkfix";
-			reg = <0x0 0x44000000 0x0 0x1000>;
-		};
-	};
-
 	/*
 	 * Just add compatible string without interrupts-extended
 	 * node as it can not be shared by Xen.
@@ -194,7 +182,8 @@
 
 		rswitch {
 			compatible = "renesas,etherswitch-xen";
-			memory-region = <&rswitch_linkfix>;
+			reg = <0 0xe68c0000 0 0x00020000>;
+			interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>;
 		};
 	};
 };

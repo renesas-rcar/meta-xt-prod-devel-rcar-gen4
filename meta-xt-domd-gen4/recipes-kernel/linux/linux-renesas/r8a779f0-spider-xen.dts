@@ -38,6 +38,13 @@
 			no-map;
 			reg = <0x0 0x47fc9000 0x0 0x2000>;
 		};
+
+		/* R-Switch LINKFIX table */
+		rswitch_linkfix_mem@4800f000 {
+			compatible = "renesas,rswitch-linkfix";
+			no-map;
+			reg = <0x0 0x4800f000 0x0 0x1000>;
+		};
 	};
 };
 
@@ -227,7 +234,7 @@
 
 &ufs {
 	status = "okay";
-        iommus = <&ipmmu_hc 15>;
+    iommus = <&ipmmu_hc 15>;
 	xen,passthrough;
 };
 

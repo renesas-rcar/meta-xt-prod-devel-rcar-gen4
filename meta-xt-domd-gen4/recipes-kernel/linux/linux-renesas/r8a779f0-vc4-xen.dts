@@ -1,9 +1,8 @@
-#include "r8a779f0-s4sk.dts"
-#include "xen-chosen.dtsi"
+#include "r8a779f0-vc4-xen-base.dts"
+#include "xen-chosen-vc4.dtsi"
 
 / {
-
-	model = "Renesas S4 Starter Kit board based on r8a779f0, running XEN hypervisor";
+	model = "Renesas S4 Vehicle Computer based on r8a779f0, running XEN hypervisor";
 
 	/* Workaround U-Boot issue with memory nodes duplication */
 	/delete-node/ memory@48000000;
@@ -11,7 +10,7 @@
 	memory@48000000 {
 		device_type = "memory";
 		/* first 128MB is reserved for secure area. */
-		reg = <0x0 0x48000000 0x0 0x58000000
+		reg = <0x0 0x48000000 0x0 0x78000000
 		       0x4 0x80000000 0x0 0x80000000>;
 	};
 
@@ -19,25 +18,6 @@
 		#address-cells = <2>;
 		#size-cells = <2>;
 		ranges;
-
-		cr54_mem {
-			no-map;
-			reg = <0x00 0x58000000 0x00 0x20000000>;
-		};
-
-		/* ICCOM CR Shared memory */
-		cr_cta_mem {
-			compatible = "renesas,iccom-memory";
-			no-map;
-			reg = <0x0 0x47fc7000 0x0 0x2000>;
-		};
-
-		/* ICCOM G4MHA Shared memory */
-		g4mh_cta_mem {
-			compatible = "renesas,iccom-memory";
-			no-map;
-			reg = <0x0 0x47fc9000 0x0 0x2000>;
-		};
 
 		/* R-Switch LINKFIX table */
 		rswitch_linkfix_mem@4800f000 {
@@ -53,7 +33,7 @@
 };
 
 /* Make sure Xen console is enabled. */
-&scif3	{
+&scif3 {
 	status = "okay";
 };
 
@@ -86,13 +66,8 @@
 			 0 0 0 2 &gic 0 0 GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
 			 0 0 0 3 &gic 0 0 GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH
 			 0 0 0 4 &gic 0 0 GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH>;
-	pinctrl-0 = <&pcie0_pins>;
 };
 
-/*
- * FIXME: Xen also parses disabled nodes: according to device tree specification
- * such nodes may become available at run-time.
- */
 &pciec1 {
 	reg = <0 0xe65d8000 0 0x3000>,
 	      <0 0xe65db000 0 0x2000>,
@@ -109,7 +84,6 @@
 			 0 0 0 2 &gic 0 0 GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
 			 0 0 0 3 &gic 0 0 GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH
 			 0 0 0 4 &gic 0 0 GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>;
-	pinctrl-0 = <&pcie1_pins>;
 };
 
 /*
@@ -133,14 +107,7 @@
  * node from the tree.
  */
 /delete-node/ &pciec0_ep;
-
-&ipmmu_ds0{
-	status = "okay";
-};
-
-&ipmmu_hc {
-	status = "okay";
-};
+/delete-node/ &pciec1_ep;
 
 &mmc0 {
 	iommus = <&ipmmu_ds0 32>;
@@ -234,9 +201,8 @@
 };
 
 &ufs {
-	status = "okay";
-    iommus = <&ipmmu_hc 15>;
-	xen,passthrough;
+	status = "disabled";
+	iommus = <&ipmmu_hc 15>;
 };
 
 &dmac0			{ xen,passthrough; };
@@ -249,82 +215,19 @@
 &gpio1			{ xen,passthrough; };
 &gpio2			{ xen,passthrough; };
 &gpio3			{ xen,passthrough; };
-&i2c2			{ xen,passthrough; };
+&i2c1			{ xen,passthrough; };
 &i2c4			{ xen,passthrough; };
-&i2c5			{ xen,passthrough; };
 &mmc0			{ xen,passthrough; };
 &pciec0			{ xen,passthrough; };
+&pciec1			{ xen,passthrough; };
 &scif0			{ xen,passthrough; };
-&scif3			{ xen,passthrough; };
+/* scif3 is Xen console */
+&hscif0			{ xen,passthrough; };
 &hscif1			{ xen,passthrough; };
 &rswitch		{ xen,passthrough; };
 &tsc			{ xen,passthrough; };
 &mailbox		{ xen,passthrough; };
-&iccom_reg00		{ xen,passthrough; };
-&rtdmac_control0_00     { xen,passthrough; };
-&rtdmac_control0_01     { xen,passthrough; };
-&rtdmac_control0_02     { xen,passthrough; };
-&rtdmac_control0_03     { xen,passthrough; };
-&rtdmac_control0_04     { xen,passthrough; };
-&rtdmac_control0_05     { xen,passthrough; };
-&rtdmac_control0_06     { xen,passthrough; };
-&rtdmac_control0_07     { xen,passthrough; };
-&rtdmac_control0_08     { xen,passthrough; };
-&rtdmac_control0_09     { xen,passthrough; };
-&rtdmac_control0_10     { xen,passthrough; };
-&rtdmac_control0_11     { xen,passthrough; };
-&rtdmac_control0_12     { xen,passthrough; };
-&rtdmac_control0_13     { xen,passthrough; };
-&rtdmac_control0_14     { xen,passthrough; };
-&rtdmac_control0_15     { xen,passthrough; };
-&rtdmac_control1_00     { xen,passthrough; };
-&rtdmac_control1_01     { xen,passthrough; };
-&rtdmac_control1_02     { xen,passthrough; };
-&rtdmac_control1_03     { xen,passthrough; };
-&rtdmac_control1_04     { xen,passthrough; };
-&rtdmac_control1_05     { xen,passthrough; };
-&rtdmac_control1_06     { xen,passthrough; };
-&rtdmac_control1_07     { xen,passthrough; };
-&rtdmac_control1_08     { xen,passthrough; };
-&rtdmac_control1_09     { xen,passthrough; };
-&rtdmac_control1_10     { xen,passthrough; };
-&rtdmac_control1_11     { xen,passthrough; };
-&rtdmac_control1_12     { xen,passthrough; };
-&rtdmac_control1_13     { xen,passthrough; };
-&rtdmac_control1_14     { xen,passthrough; };
-&rtdmac_control1_15     { xen,passthrough; };
-&rtdmac_control2_00     { xen,passthrough; };
-&rtdmac_control2_01     { xen,passthrough; };
-&rtdmac_control2_02     { xen,passthrough; };
-&rtdmac_control2_03     { xen,passthrough; };
-&rtdmac_control2_04     { xen,passthrough; };
-&rtdmac_control2_05     { xen,passthrough; };
-&rtdmac_control2_06     { xen,passthrough; };
-&rtdmac_control2_07     { xen,passthrough; };
-&rtdmac_control2_08     { xen,passthrough; };
-&rtdmac_control2_09     { xen,passthrough; };
-&rtdmac_control2_10     { xen,passthrough; };
-&rtdmac_control2_11     { xen,passthrough; };
-&rtdmac_control2_12     { xen,passthrough; };
-&rtdmac_control2_13     { xen,passthrough; };
-&rtdmac_control2_14     { xen,passthrough; };
-&rtdmac_control2_15     { xen,passthrough; };
-&rtdmac_control3_00     { xen,passthrough; };
-&rtdmac_control3_01     { xen,passthrough; };
-&rtdmac_control3_02     { xen,passthrough; };
-&rtdmac_control3_03     { xen,passthrough; };
-&rtdmac_control3_04     { xen,passthrough; };
-&rtdmac_control3_05     { xen,passthrough; };
-&rtdmac_control3_06     { xen,passthrough; };
-&rtdmac_control3_07     { xen,passthrough; };
-&rtdmac_control3_08     { xen,passthrough; };
-&rtdmac_control3_09     { xen,passthrough; };
-&rtdmac_control3_10     { xen,passthrough; };
-&rtdmac_control3_11     { xen,passthrough; };
-&rtdmac_control3_12     { xen,passthrough; };
-&rtdmac_control3_13     { xen,passthrough; };
-&rtdmac_control3_14     { xen,passthrough; };
-&rtdmac_control3_15     { xen,passthrough; };
+&ufs			{ xen,passthrough; };
 
 &soc {
 	rswitch_osid1 {
@@ -355,29 +258,4 @@
 		xen,passthrough;
 		iommus = <&ipmmu_hc 7>, <&ipmmu_hc 23>;
 	};
-
-	iccom00		{ xen,passthrough; };
-	iccom01		{ xen,passthrough; };
-	iccom02		{ xen,passthrough; };
-	iccom03		{ xen,passthrough; };
-	iccom04		{ xen,passthrough; };
-	iccom05		{ xen,passthrough; };
-	iccom06		{ xen,passthrough; };
-	iccom07		{ xen,passthrough; };
-	iccom08		{ xen,passthrough; };
-	iccom09		{ xen,passthrough; };
-	iccom010	{ xen,passthrough; };
-	iccom011	{ xen,passthrough; };
-	iccom012	{ xen,passthrough; };
-	iccom013	{ xen,passthrough; };
-	iccom014	{ xen,passthrough; };
-	iccom015	{ xen,passthrough; };
-	iccom016	{ xen,passthrough; };
-	iccom017	{ xen,passthrough; };
-	iccom018	{ xen,passthrough; };
-	iccom019	{ xen,passthrough; };
-	iccom020	{ xen,passthrough; };
-	iccom021	{ xen,passthrough; };
-	iccom022	{ xen,passthrough; };
-	iccom023	{ xen,passthrough; };
 };

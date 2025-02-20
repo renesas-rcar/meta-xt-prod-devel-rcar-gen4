@@ -1,0 +1,83 @@
+#include "r8a779f0-vc4.dts"
+
+/* inlined r8a779f0-vc4-tsn0-phy-1g.dtso */
+
+&gpio3 {
+	tsn0-pre-mux {
+		gpio-hog;
+		gpios = <8 GPIO_ACTIVE_HIGH>;
+		output-high;
+		line-name = "TSN0-PRE-MUX";
+	};
+
+	tsn0-mux {
+		gpio-hog;
+		gpios = <6 GPIO_ACTIVE_HIGH>;
+		output-high;
+		line-name = "TSN0-MUX";
+	};
+};
+
+&tsn0 {
+	phy-mode = "sgmii";
+	phy-handle = <&tsn0_phy_1g>;
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	tsn0_phy_1g: ethernet-phy@3 {
+		reg = <3>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+		status = "okay";
+	};
+};
+
+/* inlined r8a779f0-vc4-tsn0-phy-1g.dtso */
+
+&gpio3 {
+	tsn1-mux {
+		gpio-hog;
+		gpios = <14 GPIO_ACTIVE_HIGH>;
+		output-high;
+		line-name = "TSN1-MUX";
+	};
+};
+
+&tsn1 {
+	phy-mode = "sgmii";
+	phy-handle = <&tsn1_phy_1g>;
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	tsn1_phy_1g: ethernet-phy@3 {
+		reg = <3>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+		status = "okay";
+	};
+};
+
+/* inlined r8a779f0-vc4-tsn2-phy-1g.dtso */
+
+&gpio3 {
+	tsn2-mux {
+		gpio-hog;
+		gpios = <7 GPIO_ACTIVE_HIGH>;
+		output-high;
+		line-name = "TSN2-MUX";
+	};
+};
+
+&tsn2 {
+	phy-mode = "sgmii";
+	phy-handle = <&tsn2_phy_1g>;
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	tsn2_phy_1g: ethernet-phy@3 {
+		reg = <3>;
+		compatible = "ethernet-phy-ieee802.3-c45";
+		status = "okay";
+	};
+};
