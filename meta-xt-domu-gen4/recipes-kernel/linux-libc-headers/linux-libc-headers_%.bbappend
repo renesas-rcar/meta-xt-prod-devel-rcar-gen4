@@ -1,5 +1,6 @@
-RENESAS_BSP_URL = "git://github.com/renesas-rcar/linux-bsp.git"
+require recipes-kernel/inc/linux-sources.inc
 
-BRANCH = "v5.10.41/rcar-5.1.7.rc12"
-SRCREV = "${AUTOREV}"
-LINUX_VERSION = "5.10.41"
+# we need to avoid a situation when both linux and linux-libc-headers
+# are fetching the same sources simultaneously because this may result in
+# the rejection from the github
+do_fetch[depends] = "virtual/kernel:do_fetch"
