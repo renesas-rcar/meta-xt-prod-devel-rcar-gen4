@@ -15,8 +15,8 @@ variables:
   SOC_FAMILY: "r8a779f0"
   XT_DOMD_CONFIG_NAME: "domd-%{MACHINE}.cfg"
   XT_DOMU_CONFIG_NAME: "domu-%{MACHINE}.cfg"
-  XT_KERNEL_BRANCH: "v5.10.41/rcar-5.1.7.rc11.2-xt"
-  XT_KERNEL_REV: "769ab722739878c3c1aaa1571f6ca996b135f8f6"
+  XT_KERNEL_BRANCH: "v5.10.235/rcar-5.1.8.tmp.rc2-xt"
+  XT_KERNEL_REV: "709adc8c6e96f1a94a490466b3b7e123e9ead398"
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
@@ -39,8 +39,8 @@ common_data:
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
     - type: git
-      url: https://github.com/renesas-rcar/meta-renesas.git
-      rev: "bdab02fbfbbd79565b6db52a6fa62aad9b15aa99"
+      url: https://rcar-env.dgn.renesas.com/gitlab/linuxbsp_yocto/meta-renesas.git
+      rev: "fb3878b0908e28b8da791e78a782206e3f76f5d8"
     - type: git
       url: https://github.com/xen-troops/meta-xt-rcar
       rev: "aaf7d0ba3c11ee5a9876d1a8b0b875b9dedfc1a3"
