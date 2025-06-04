@@ -20,7 +20,7 @@ reduce possible confuse, we recommend to download only
 `prod-devel-rcar-s4.yaml`:
 
 ```
-# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/spider-1.2.2/prod-devel-rcar-s4.yaml
+# curl -O https://raw.githubusercontent.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4/s4-1.2.3/prod-devel-rcar-s4.yaml
 ```
 
 ## Building
@@ -32,17 +32,18 @@ line option:
 
 ```
 # moulin prod-devel-rcar-s4.yaml --help-config
-usage: moulin prod-devel-rcar-s4.yaml [--ENABLE_DOMU {no,yes}]
+usage: moulin prod-devel-rcar-s4.yaml [--MACHINE {spider,s4sk}] [--ENABLE_DOMU {no,yes}]
 
-Config file description: Xen-Troops development setup for Renesas RCAR Gen4
-hardware
+Config file description: Xen-Troops development setup for Renesas RCAR Gen4 hardware
 
-optional arguments:
+options:
+  --MACHINE {spider,s4sk}
+                        RCAR Gen4-based device (default: spider)
   --ENABLE_DOMU {no,yes}
-                        Build generic Yocto-based DomU
+                        Build generic Yocto-based DomU (default: no)
 ```
 
-Only one machine is supported as of now: `spider`. You can enable or
+Two machines are supported as of now: `spider`(default) and `s4sk`. You can enable or
 disable DomU build with `--ENABLE_DOMU=yes` option.
 Be default it is disabled.
 
