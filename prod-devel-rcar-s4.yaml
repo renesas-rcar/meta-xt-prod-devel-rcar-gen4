@@ -42,7 +42,7 @@ common_data:
       url: "https://github.com/renesas-rcar/meta-renesas.git"
       rev: "ac91deaaa196f379256b07ac8371d0014724dfa1"
     - type: git
-      url: https://github.com/xen-troops/meta-xt-rcar
+      url: "https://github.com/xen-troops/meta-xt-rcar"
       rev: "aaf7d0ba3c11ee5a9876d1a8b0b875b9dedfc1a3"
 
   # Common configuration options for all yocto-based domains
@@ -85,9 +85,6 @@ common_data:
     # Generate ext4 image files
     - [IMAGE_FSTYPES:append, " ext4"]
     - [IMAGE_INSTALL:append, " perf"]
-
-    # Mask Renesas OP-TEE
-    - [BBMASK:append, " /meta-renesas/meta-rcar-gateway/recipes-bsp/optee"]
 
 components:
   dom0:
@@ -173,7 +170,6 @@ components:
         - "../meta-renesas/meta-rcar-gateway"
         - "../meta-xt-common/meta-xt-domx"
         - "../meta-xt-common/meta-xt-driver-domain"
-        - "../meta-xt-common/meta-xt-security"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domd-gen4"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domd-gen4"
@@ -215,7 +211,6 @@ components:
         - "../meta-openembedded/meta-python"
         - "../meta-renesas/meta-rcar-gateway"
         - "../meta-xt-common/meta-xt-domu"
-        - "../meta-xt-common/meta-xt-security"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domu-gen4"
