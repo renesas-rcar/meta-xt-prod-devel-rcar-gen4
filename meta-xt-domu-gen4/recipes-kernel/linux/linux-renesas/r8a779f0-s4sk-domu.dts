@@ -44,8 +44,7 @@
 
 		iccom_reg00: mfis@e6260000 {
 			compatible = "generic-uio";
-			reg = <0 0xe6260000 0 0x10000>;
-			linux,uio-name = "iccom_reg_00";
+			reg = <0 0xe6260000 0 0x10000>;linux,uio-name = "iccom_reg_00";
 		};
 
 		iccom00 {
@@ -135,6 +134,7 @@
 
 		iccom014 {
 			compatible = "generic-uio";
+			reg = <0 0xe6260000 0 0x10000>;
 			interrupts = <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>;
 			linux,uio-name = "iccom_14";
 		};
@@ -146,6 +146,7 @@
 		};
 		iccom016 {
 			compatible = "generic-uio";
+			reg = <0 0xe6260000 0 0x10000>;
 			interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
 			linux,uio-name = "iccom_16";
 		};
