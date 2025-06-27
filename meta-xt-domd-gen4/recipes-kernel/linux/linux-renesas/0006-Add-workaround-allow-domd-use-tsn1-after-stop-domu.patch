@@ -1,0 +1,52 @@
+From 7837ee8a627d2a7b86924502bf59aa29815308a8 Mon Sep 17 00:00:00 2001
+From: Phuong Nguyen Dinh <phuong.nguyen.vx@renesas.com>
+Date: Wed, 20 Aug 2025 17:51:40 +0700
+Subject: [PATCH] Add workaround of VMQ remove, rswitch driver also switch tsn1
+ down. 
+Workaround is: only remove VMQ interface.
+
+Signed-off-by: Phuong Nguyen Dinh <phuong.nguyen.vx@renesas.com>
+---
+ .../net/ethernet/renesas/rswitch_xenback.c    | 23 +++++++++----------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/rswitch_xenback.c b/drivers/net/ethernet/renesas/rswitch_xenback.c
+index b042a15a1d18..fca07a13b441 100644
+--- a/drivers/net/ethernet/renesas/rswitch_xenback.c
++++ b/drivers/net/ethernet/renesas/rswitch_xenback.c
+@@ -144,21 +144,20 @@ static int rswitch_vmq_back_remove(struct xenbus_device *dev)
+ {
+ 	struct rswitch_vmq_back_info *be = dev_get_drvdata(&dev->dev);
+ 
+-	if (be->rdev) {
++	if (be->rdev && (be->type == RSWITCH_PV_VMQ)) {
+ 		rswitch_vmq_back_disconnect(dev);
+ 		rswitch_ndev_unregister(be->rdev, -1);
+ 		be->rdev = NULL;
+-		if (be->type == RSWITCH_PV_VMQ) {
+-			struct gnttab_unmap_grant_ref unmap_op;
+-
+-			hrtimer_cancel(&be->tx_trigger_hrttimer);
+-			gnttab_set_unmap_op(&unmap_op,
+-					    (uintptr_t)
+-					    pfn_to_kaddr(page_to_xen_pfn((be->shared_page))),
+-					    GNTMAP_host_map, be->gref);
+-			gnttab_unmap_refs(&unmap_op, NULL, &be->shared_page, 1);
+-			gnttab_free_pages(1, &be->shared_page);
+-		}
++
++		struct gnttab_unmap_grant_ref unmap_op;
++
++		hrtimer_cancel(&be->tx_trigger_hrttimer);
++		gnttab_set_unmap_op(&unmap_op,
++					(uintptr_t)
++					pfn_to_kaddr(page_to_xen_pfn((be->shared_page))),
++					GNTMAP_host_map, be->gref);
++		gnttab_unmap_refs(&unmap_op, NULL, &be->shared_page, 1);
++		gnttab_free_pages(1, &be->shared_page);
+ 	}
+ 
+ 	if (be->rx_chain)
+-- 
+2.34.1
+
