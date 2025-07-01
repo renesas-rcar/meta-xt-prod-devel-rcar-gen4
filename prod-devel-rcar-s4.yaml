@@ -86,6 +86,7 @@ common_data:
     - [IMAGE_FSTYPES:append, " ext4"]
     - [IMAGE_INSTALL:append, " perf"]
 
+    - [BBMASK:append, "meta-xt-rcar/meta-xt-gateway/meta-xt-domd-gen4/recipes-bsp/u-boot"]
 components:
   dom0:
     build-dir: "%{YOCTOS_WORK_DIR}"
