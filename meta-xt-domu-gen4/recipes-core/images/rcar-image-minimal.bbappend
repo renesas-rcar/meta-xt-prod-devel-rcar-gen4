@@ -13,3 +13,4 @@ IMAGE_INSTALL:append = " kernel-module-ixgbevf"
 
 IMAGE_INSTALL:append = " e2fsprogs"
 IMAGE_INSTALL:append = " iproute2 iproute2-tc"
+IMAGE_INSTALL:append = " iperf2 libtirpc"
