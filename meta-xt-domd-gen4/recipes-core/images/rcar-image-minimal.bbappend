@@ -12,6 +12,7 @@ IMAGE_INSTALL:append = " kernel-module-nvme-core kernel-module-nvme"
 IMAGE_INSTALL:append = " kernel-module-ixgbe"
 
 IMAGE_INSTALL:append = " e2fsprogs"
+IMAGE_INSTALL:append = " iperf2"
 
 IMAGE_INSTALL:append = " \
     xen \
