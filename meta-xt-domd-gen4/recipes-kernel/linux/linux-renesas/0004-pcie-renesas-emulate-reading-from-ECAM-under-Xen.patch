@@ -1,4 +1,4 @@
-From f72b375b237351cd743093b3fd5e4d7ccac59140 Mon Sep 17 00:00:00 2001
+From 13526d02b21963e65ded6986c00698661f0f13c8 Mon Sep 17 00:00:00 2001
 From: NamTran <nam.tran.sx@bp.renesas.com>
 Date: Wed, 20 May 2026 14:21:37 +0700
 Subject: [PATCH 4/5] pcie: renesas; emulate reading from ECAM under Xen
@@ -8,7 +8,7 @@ Subject: [PATCH 4/5] pcie: renesas; emulate reading from ECAM under Xen
  1 file changed, 26 insertions(+)
 
 diff --git a/drivers/pci/controller/dwc/pcie-renesas.c b/drivers/pci/controller/dwc/pcie-renesas.c
-index 589c57834621..eda248353952 100644
+index 589c57834621..0d8a3f12b570 100644
 --- a/drivers/pci/controller/dwc/pcie-renesas.c
 +++ b/drivers/pci/controller/dwc/pcie-renesas.c
 @@ -22,6 +22,7 @@
@@ -26,7 +26,7 @@ index 589c57834621..eda248353952 100644
 +void __iomem *renesas_xen_map_bus(struct pci_bus *bus, unsigned int devfn,
 +			       int where)
 +{
-+	struct pcie_port *pp = bus->sysdata;
++	struct dw_pcie_rp *pp = bus->sysdata;
 +	const int bus_shift = 20;
 +	unsigned int devfn_shift = bus_shift - 8;
 +	unsigned int busn = bus->number;
