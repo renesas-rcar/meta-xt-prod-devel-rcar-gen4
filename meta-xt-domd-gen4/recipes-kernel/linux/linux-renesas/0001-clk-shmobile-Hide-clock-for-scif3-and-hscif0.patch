@@ -1,4 +1,4 @@
-From 7684b9f669db345e6db050f57e25eb714002772d Mon Sep 17 00:00:00 2001
+From 3b7d6f1297368ebf01f0c878623b6768ae53d550 Mon Sep 17 00:00:00 2001
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 Date: Tue, 19 Oct 2021 13:59:39 +0300
 Subject: [PATCH 1/5] clk:shmobile: Hide clock for scif3 and hscif0
@@ -13,10 +13,10 @@ Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 14bb80d3e15a..87cb6ea1f745 100644
+index da681f07b2ad..02dc80420daa 100644
 --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
 +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -123,7 +123,9 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
+@@ -122,7 +122,9 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
  };
  
  static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
@@ -26,7 +26,7 @@ index 14bb80d3e15a..87cb6ea1f745 100644
  	DEF_MOD("hscif1",	515,	R8A779F0_CLK_SASYNCPERD1),
  	DEF_MOD("hscif2",	516,	R8A779F0_CLK_SASYNCPERD1),
  	DEF_MOD("hscif3",	517,	R8A779F0_CLK_SASYNCPERD1),
-@@ -145,7 +147,9 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
+@@ -144,7 +146,9 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
  	DEF_MOD("rtdm3",	701,	R8A779F0_CLK_S0D2),
  	DEF_MOD("scif0",	702,	R8A779F0_CLK_SASYNCPERD4),
  	DEF_MOD("scif1",	703,	R8A779F0_CLK_SASYNCPERD4),
@@ -34,8 +34,8 @@ index 14bb80d3e15a..87cb6ea1f745 100644
  	DEF_MOD("scif3",	704,	R8A779F0_CLK_SASYNCPERD4),
 +#endif
  	DEF_MOD("scif4",	705,	R8A779F0_CLK_SASYNCPERD4),
- 	DEF_MOD("sdhi0",	706,	R8A779F0_CLK_SD0),
- 	DEF_MOD("sydm1",	709,	R8A779F0_CLK_S0D3),
+ 	DEF_MOD("sdhi0",        706,    R8A779F0_CLK_SD0),
+ 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
 -- 
-2.38.1
+2.43.0
 

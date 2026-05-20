@@ -1,19 +1,14 @@
-From 4f68709ffd64c14ac960670aa2891b34a0ea026c Mon Sep 17 00:00:00 2001
-From: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
-Date: Fri, 16 Dec 2022 02:15:48 +0200
-Subject: [PATCH 5/5] [HACK] pcie: renesas; emulate reading from ECAM under Xen
+From f72b375b237351cd743093b3fd5e4d7ccac59140 Mon Sep 17 00:00:00 2001
+From: NamTran <nam.tran.sx@bp.renesas.com>
+Date: Wed, 20 May 2026 14:21:37 +0700
+Subject: [PATCH 4/5] pcie: renesas; emulate reading from ECAM under Xen
 
-If kernel is running as Xen guest, hypervisor will emulate ECAM
-spaces for us. Thus, we need to replace child_ops with ops
-that access ECAM address space.
-
-Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
 ---
- drivers/pci/controller/dwc/pcie-renesas.c | 28 +++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/pci/controller/dwc/pcie-renesas.c | 26 +++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/drivers/pci/controller/dwc/pcie-renesas.c b/drivers/pci/controller/dwc/pcie-renesas.c
-index 12bc8b5cf559..c2ea20fde7b9 100644
+index 589c57834621..eda248353952 100644
 --- a/drivers/pci/controller/dwc/pcie-renesas.c
 +++ b/drivers/pci/controller/dwc/pcie-renesas.c
 @@ -22,6 +22,7 @@
@@ -24,11 +19,10 @@ index 12bc8b5cf559..c2ea20fde7b9 100644
  
  #include "../../pci.h"
  #include "pcie-designware.h"
-@@ -210,12 +211,39 @@ static const struct dw_pcie_ops dw_pcie_ops = {
+@@ -239,12 +240,37 @@ static const struct dw_pcie_ops dw_pcie_ops = {
  	.link_up = renesas_pcie_link_up,
  };
  
-+
 +void __iomem *renesas_xen_map_bus(struct pci_bus *bus, unsigned int devfn,
 +			       int where)
 +{
@@ -44,14 +38,13 @@ index 12bc8b5cf559..c2ea20fde7b9 100644
 +	return base + (devfn << devfn_shift) + where;
 +}
 +
-+
 +static struct pci_ops renesas_xen_child_ops = {
 +	.map_bus = renesas_xen_map_bus,
 +	.read = pci_generic_config_read,
 +	.write = pci_generic_config_write,
 +};
 +
- static int renesas_pcie_host_init(struct pcie_port *pp)
+ static int renesas_pcie_host_init(struct dw_pcie_rp *pp)
  {
  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
  	u32 val;
@@ -65,5 +58,5 @@ index 12bc8b5cf559..c2ea20fde7b9 100644
  
  	dw_pcie_dbi_ro_wr_en(pci);
 -- 
-2.38.1
+2.43.0
 

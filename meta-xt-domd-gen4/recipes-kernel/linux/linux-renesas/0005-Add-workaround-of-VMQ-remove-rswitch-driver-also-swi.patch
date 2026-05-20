@@ -1,8 +1,9 @@
-From 7837ee8a627d2a7b86924502bf59aa29815308a8 Mon Sep 17 00:00:00 2001
+From 211a5f3ac88326fd847ac2c2b1322d2392645463 Mon Sep 17 00:00:00 2001
 From: Phuong Nguyen Dinh <phuong.nguyen.vx@renesas.com>
 Date: Wed, 20 Aug 2025 17:51:40 +0700
-Subject: [PATCH] Add workaround of VMQ remove, rswitch driver also switch tsn1
- down. 
+Subject: [PATCH 5/5] Add workaround of VMQ remove, rswitch driver also switch
+ tsn1 down.
+
 Workaround is: only remove VMQ interface.
 
 Signed-off-by: Phuong Nguyen Dinh <phuong.nguyen.vx@renesas.com>
@@ -48,5 +49,5 @@ index b042a15a1d18..fca07a13b441 100644
  
  	if (be->rx_chain)
 -- 
-2.34.1
+2.43.0
 
