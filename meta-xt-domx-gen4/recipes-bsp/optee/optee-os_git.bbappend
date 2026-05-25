@@ -1,3 +1,7 @@
+PV = "3.13+renesas+git${SRCPV}"
+BRANCH = "rcar-gen4_3.13"
+SRCREV = "6f9792db6411d6c172077eb28e584ab5f46a174e"
+
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # Enable virtualization support
@@ -10,6 +14,7 @@ EXTRA_OEMAKE += "CFG_VIRTUALIZATION=y \
 
 SRC_URI:append = " \
     file://0001-plat-rcar_gen4-extend-memory-available-to-OP-TEE.patch \
+    file://0001-Makefile-Disable-linker-warning.patch \
 "
 
 python __anonymous () {
