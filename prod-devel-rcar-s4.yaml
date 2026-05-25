@@ -15,19 +15,19 @@ variables:
   SOC_FAMILY: "r8a779f0"
   XT_DOMD_CONFIG_NAME: "domd-%{MACHINE}.cfg"
   XT_DOMU_CONFIG_NAME: "domu-%{MACHINE}.cfg"
-  XT_KERNEL_BRANCH: "v6.1.166/rcar-5.3.9.kernel.s4.rc1-xt"
-  XT_KERNEL_REV: "b1ecf2280be15473f853d6214d29074ef77bf7d2"
+  XT_KERNEL_BRANCH: "v6.1.166/rcar-5.3.9.kernel.s4.rc2-xt"
+  XT_KERNEL_REV: "b11c3f0e7ae72460c222d1ca3afa0646dcc75ca9"
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
     - type: git
-      url: "git://git.yoctoproject.org/poky"
+      url: "https://git.yoctoproject.org/poky"
       rev: "fb91a49387cfb0c8d48303bb3354325ba2a05587"
     - type: git
-      url: "git://git.openembedded.org/meta-openembedded"
+      url: "https://git.openembedded.org/meta-openembedded"
       rev: "a72010b414ee3d73888ac9cb4e310e8f05e13aea"
     - type: git
-      url: "git://git.yoctoproject.org/meta-virtualization"
+      url: "https://git.yoctoproject.org/meta-virtualization"
       rev: "66ee8d268db25a9f2848bda6858c284c745f549f"
     - type: git
       url: "https://github.com/xen-troops/meta-xt-common.git"
@@ -39,8 +39,8 @@ common_data:
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
     - type: git
-      url: https://rcar-env.dgn.renesas.com/gitlab/linuxbsp_yocto/meta-renesas.git
-      rev: "cd5782009fb8ce3b10a00d61e74cb77d3b4d6aa9"
+      url: git://rcar-env.dgn.renesas.com/gitlab/linuxbsp_yocto/meta-renesas.git
+      rev: "966d341586fdd5a7823b916f4a350b09c8fdb3dc"
     - type: git
       url: https://github.com/xen-troops/meta-xt-rcar
       rev: "aaf7d0ba3c11ee5a9876d1a8b0b875b9dedfc1a3"
@@ -141,7 +141,7 @@ components:
       - *COMMON_SOURCES
       - *DOMD_DOMU_SOURCES
       - type: git
-        url: git://git.yoctoproject.org/meta-selinux
+        url: "https://git.yoctoproject.org/meta-selinux"
         rev: "9f5a46620a07d7b15722593a33e46a4d19392b75"
     builder:
       type: yocto
@@ -171,6 +171,7 @@ components:
         - "../meta-renesas/meta-rcar-gateway"
         - "../meta-xt-common/meta-xt-domx"
         - "../meta-xt-common/meta-xt-driver-domain"
+        - "../meta-xt-common/meta-xt-security"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domd-gen4"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domd-gen4"
@@ -212,6 +213,7 @@ components:
         - "../meta-openembedded/meta-python"
         - "../meta-renesas/meta-rcar-gateway"
         - "../meta-xt-common/meta-xt-domu"
+        - "../meta-xt-common/meta-xt-security"
         - "../meta-xt-rcar/meta-xt-gateway/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domx-gen4"
         - "../meta-xt-prod-devel-rcar-gen4/meta-xt-domu-gen4"
