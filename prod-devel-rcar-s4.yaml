@@ -33,14 +33,14 @@ common_data:
       url: "https://github.com/xen-troops/meta-xt-common.git"
       rev: "0890d85d29c29265663b5e0eac7998916462c05c"
     - type: git
-      url: "https://rcar-env.dgn.renesas.com/gitlab/xen/meta-xt-prod-devel-rcar-gen4.git"
-      rev: s4-1.3.0-dev
+      url: "https://github.com/renesas-rcar/meta-xt-prod-devel-rcar-gen4.git"
+      rev: s4-1.2.6
 
   # Sources to be used in DomD and DomU
   domd_domu_sources: &DOMD_DOMU_SOURCES
     - type: git
-      url: https://rcar-env.dgn.renesas.com/gitlab/linuxbsp_yocto/meta-renesas.git
-      rev: "966d341586fdd5a7823b916f4a350b09c8fdb3dc"
+      url: "https://github.com/renesas-rcar/meta-renesas.git"
+      rev: "c6277b5ffe06021679f7d3991d2448e0f3a15f52"
     - type: git
       url: https://github.com/xen-troops/meta-xt-rcar
       rev: "aaf7d0ba3c11ee5a9876d1a8b0b875b9dedfc1a3"
