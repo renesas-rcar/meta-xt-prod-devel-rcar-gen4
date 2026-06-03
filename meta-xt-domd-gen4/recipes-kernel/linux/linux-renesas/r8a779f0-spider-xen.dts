@@ -21,6 +21,11 @@
 		#size-cells = <2>;
 		ranges;
 
+		optee_shm: optee-shm@407fec000 {
+			reg = <0x4 0x07fec000 0x0 0x14000>;
+			no-map;
+		};
+		
 		cr54_mem {
 			no-map;
 			reg = <0x00 0x58000000 0x00 0x20000000>;
