@@ -15,8 +15,8 @@ variables:
   SOC_FAMILY: "r8a779f0"
   XT_DOMD_CONFIG_NAME: "domd-%{MACHINE}.cfg"
   XT_DOMU_CONFIG_NAME: "domu-%{MACHINE}.cfg"
-  XT_KERNEL_BRANCH: "v6.1.166/rcar-5.3.9.kernel.s4.rc1-xt"
-  XT_KERNEL_REV: "afaa6b1dbe3361394eb53a53239faefa14b3b042"
+  XT_KERNEL_BRANCH: "v6.1.166/rcar-5.3.9.rc2-xt"
+  XT_KERNEL_REV: "caa2b1de64fcdc69925bdb296ae5572c7beb6fc0"
 common_data:
   # Sources used by all yocto-based domains
   sources: &COMMON_SOURCES
