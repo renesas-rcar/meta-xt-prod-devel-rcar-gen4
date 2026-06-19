@@ -10,7 +10,7 @@ SRC_URI:append = " \
     file://0001-clk-shmobile-Hide-clock-for-scif3-and-hscif0.patch \
     file://0002-PCIe-MSI-support.${MACHINE}.patch \
     file://0003-HACK-Allow-DomD-enumerate-PCI-devices.patch \
-    file://0004-HACK-pcie-renesas-emulate-reading-from-ECAM-under-Xe.patch \
+    file://0004-HACK-pcie-renesas-emulate-reading-from-ECAM-under-Xen.patch \
     file://0005-Add-workaround-allow-domd-use-tsn1-after-stop-domu.patch \
     file://r8a779f0-domd.dts;subdir=git/arch/arm64/boot/dts/renesas \
     file://r8a779f0-xen.dts;subdir=git/arch/arm64/boot/dts/renesas \
